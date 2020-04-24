@@ -1,4 +1,5 @@
 <?php
+$cacheFolder = __DIR__ . '/caches/';
 $apiUrl = "https://api.uptimerobot.com/v2/getMonitors";
 $apiKeys = [
     'blog' => "ur913496-7955aa06d4a313f72cd24709"
@@ -15,6 +16,20 @@ if(!$data || !$apiKeys[$data['api_key']]){
     exit();
 }
 $data['api_key'] = $apiKeys[$data['api_key']];
+
+//判断是否返回缓存
+if(!file_exists($cacheFolder)){
+    mkdir($cacheFolder);
+}
+$cacheFileName = $cacheFolder.$data['api_key'];
+if(file_exists($cacheFileName)){
+    $cacheTime = filemtime($cacheFileName);
+    if(time() < $cacheTime + 60) { 	//缓存一分钟。
+        echo file_get_contents($cacheFileName);
+        exit();
+    }
+}
+
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $apiUrl);
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
@@ -38,4 +53,5 @@ foreach ($resArray['monitors'] as &$monitor){
     unset($monitor['http_username']);
 }
 $output = json_encode($resArray);
+file_put_contents($cacheFileName,$output);
 echo $output;
