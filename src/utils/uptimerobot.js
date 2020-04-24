@@ -2,7 +2,8 @@ import dayjs from 'dayjs';
 import Axios from 'axios';
 import { fixed } from './helper';
 
-const Api = 'https://api.uptimerobot.com/v2/getMonitors';
+// const Api = 'https://api.uptimerobot.com/v2/getMonitors';
+const Api = '/getMonitors.php';
 
 export const GetMonitors = async (apikey, days) => {
 
@@ -33,12 +34,27 @@ export const GetMonitors = async (apikey, days) => {
 
   const monitors = await Axios.post(Api, postdata, { timeout: 10000 })
     .then(response => {
-      if (response.data.stat === 'ok') return Promise.resolve(response.data.monitors);
-      else return Promise.reject(response.data.error);
+      if (!response.data.stat) return Promise.reject({
+        stat: 'fail',
+        error: {
+          message: '接口响应解析失败',
+        }
+      });
+      if (response.data.stat === 'ok') return Promise.resolve(response.data);
+      // if (response.data.stat === 'ok') return Promise.resolve(response.data.monitors);
+      else return Promise.reject(response.data);
+      // else return Promise.reject(response.data.error);
+    }, e => {
+      return Promise.reject({
+        stat: 'fail',
+        error: {
+          message: '无法连接API：' + e.message,
+        }
+      });
     });
 
   const apps = [];
-  monitors.forEach(monitor => {
+  monitors.monitors.forEach(monitor => {
 
     let ranges = monitor.custom_uptime_ranges.split('-');
     let average = fixed(ranges.pop());

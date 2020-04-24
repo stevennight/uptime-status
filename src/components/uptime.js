@@ -9,14 +9,25 @@ const Uptime = (props) => {
   const [ monitors, setMonitors ] = useState(null);
 
   useEffect(() => {
-    GetMonitors(apikey, CountDays).then(setMonitors);
+    GetMonitors(apikey, CountDays).then(setMonitors, setMonitors);
   }, [apikey]);
 
-  return monitors ? monitors.map(item => (
-    <UptimeItem key={item.id} monitor={item} />
-  )) : (
-    <div className="item loading"></div>
-  );
+  let res;
+  if(!monitors){
+    res = (<div className="item loading"></div>)
+  } else if(monitors.stat === 'fail'){
+    res = (<div className="item">{monitors.error.message}</div>)
+  } else {
+    res = monitors.map(item => (
+      <UptimeItem key={item.id} monitor={item} />
+    ))
+  }
+  return res;
+  // return monitors ? monitors.map(item => (
+  //   <UptimeItem key={item.id} monitor={item} />
+  // )) : (
+  //   <div className="item loading"></div>
+  // );
 }
 
 export default Uptime;
