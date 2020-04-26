@@ -46,11 +46,13 @@ if($resArray['stat'] === "fail"){
     echo $res;
     exit();
 }
-foreach ($resArray['monitors'] as &$monitor){
-    unset($monitor['url']);
-    unset($monitor['port']);
-    unset($monitor['http_password']);
-    unset($monitor['http_username']);
+if($resArray['monitors']){
+    foreach ($resArray['monitors'] as &$monitor){
+        unset($monitor['url']);
+        unset($monitor['port']);
+        unset($monitor['http_password']);
+        unset($monitor['http_username']);
+    }
 }
 $output = json_encode($resArray);
 file_put_contents($cacheFileName,$output);
