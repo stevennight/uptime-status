@@ -55,7 +55,7 @@ if($resArray['monitors']){
     }
 }
 $output = json_encode($resArray);
-if($resArray['fail'] && $resArray['error'] && $output){
+if($resArray['fail'] && $output){
     file_put_contents($cacheFileName,$output);
     echo $output;
 } else {
