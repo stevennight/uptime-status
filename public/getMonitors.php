@@ -55,5 +55,14 @@ if($resArray['monitors']){
     }
 }
 $output = json_encode($resArray);
-file_put_contents($cacheFileName,$output);
-echo $output;
+if($resArray['fail'] && $resArray['error'] && $output){
+    file_put_contents($cacheFileName,$output);
+    echo $output;
+} else {
+    echo json_encode([
+        "stat" => "fail",
+        "error" => [
+            "message" => "未知错误：响应结果解析失败"
+        ],
+    ]);
+}
