@@ -23,11 +23,11 @@ if(!file_exists($cacheFolder)){
 }
 $cacheFileName = $cacheFolder.$data['api_key'];
 if(file_exists($cacheFileName)){
-    $cacheTime = filemtime($cacheFileName);
-    if(time() < $cacheTime + 60) { 	//缓存一分钟。
-        echo file_get_contents($cacheFileName);
-        exit();
-    }
+	$cacheTime = filemtime($cacheFileName);
+	if(time() < $cacheTime + 60) { 	//缓存一分钟。
+		echo file_get_contents($cacheFileName);
+		exit();
+	}
 }
 
 $ch = curl_init();
@@ -55,7 +55,7 @@ if($resArray['monitors']){
     }
 }
 $output = json_encode($resArray);
-if($resArray['fail'] && $output){
+if($resArray['stat'] && $output){
     file_put_contents($cacheFileName,$output);
     echo $output;
 } else {
